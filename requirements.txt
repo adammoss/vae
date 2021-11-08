@@ -1,0 +1,6 @@
+pytorch-lightning
+tensorboard
+torch
+torchvision
+wandb
+astrovision
