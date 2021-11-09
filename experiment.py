@@ -163,6 +163,7 @@ class VAEXperiment(pl.LightningModule):
 
         SetRange = transforms.Lambda(lambda X: 2 * X - 1.)
         SetScale = transforms.Lambda(lambda X: X / X.sum(0).expand_as(X))
+        ArcSinh = transforms.Lambda(lambda X: torch.asinh(X))
 
         if self.params['dataset'] == 'celeba':
             transform = transforms.Compose([transforms.RandomHorizontalFlip(),
@@ -181,7 +182,8 @@ class VAEXperiment(pl.LightningModule):
         elif self.params['dataset'] == 'lens':
             transform = transforms.Compose([transforms.Resize(self.params['img_size']),
                                             transforms.ToTensor(),
-                                            transforms.Normalize(1.0E-13, 1.0E-12)])
+                                            transforms.Normalize(1.0E-13, 1.0E-12),
+                                            ArcSinh])
         else:
             raise ValueError('Undefined dataset type')
         return transform
