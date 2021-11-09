@@ -181,7 +181,7 @@ class VAEXperiment(pl.LightningModule):
         elif self.params['dataset'] == 'lens':
             transform = transforms.Compose([transforms.Resize(self.params['img_size']),
                                             transforms.ToTensor(),
-                                            SetRange])
+                                            transforms.Normalize(1.0E-13, 1.0E-12)])
         else:
             raise ValueError('Undefined dataset type')
         return transform
