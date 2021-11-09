@@ -23,7 +23,7 @@ class LatentDimInterpolator(Callback):
         interpolate_epoch_interval: int = 1,
         range_start: int = -5,
         range_end: int = 5,
-        steps: int = 11,
+        steps: int = 15,
         num_samples: int = 2,
         normalize: bool = True,
     ):
