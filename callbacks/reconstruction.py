@@ -22,8 +22,6 @@ class ReconstructionCallback(Callback):
             outs = pl_module.model.generate(val_imgs)
         pl_module.train()
 
-        print(outs.size())
-
         mosaics = torch.cat([outs, val_imgs], dim=-2)
         caption = "Top: Output, Bottom: Input"
         trainer.logger.experiment.log({
