@@ -21,6 +21,7 @@ parser.add_argument('-c', '--config',
 parser.add_argument('-m', '--model_params.name')
 parser.add_argument('-d', '--exp_params.dataset')
 parser.add_argument('--model_params.in_channels', type=int)
+parser.add_argument('--model_params.latent_dim', type=int)
 parser.add_argument('--trainer_params.gpus', type=int)
 parser.add_argument('--wandb_api_key', type=str, default='')
 args = parser.parse_args()
