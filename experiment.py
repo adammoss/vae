@@ -149,7 +149,7 @@ class VAEXperiment(pl.LightningModule):
             dataset = LensChallengeSpace1(root=self.params['data_path'],
                                           train=False,
                                           transform=transform,
-                                          download=True),
+                                          download=True)
         else:
             raise ValueError('Undefined dataset type')
 
