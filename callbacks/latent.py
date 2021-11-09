@@ -73,10 +73,7 @@ class LatentDimInterpolator(Callback):
 
                     # sample
                     with torch.no_grad():
-                        img = pl_module.decode(z.to(pl_module.device)).cpu()
-
-                    if len(img.size()) == 2:
-                        img = img.view(self.num_samples, *pl_module.img_dim)
+                        img = pl_module.model.decode(z.to(pl_module.device)).cpu()
 
                     img = img[0]
                     img = img.unsqueeze(0)
