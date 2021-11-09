@@ -16,7 +16,9 @@ parser.add_argument('-c', '--config',
                     metavar='FILE',
                     help='path to the config file',
                     default='configs/vae.yaml')
+parser.add_argument('-m', '--model_params.name')
 parser.add_argument('-d', '--exp_params.dataset')
+parser.add_argument('--trainer_params.gpus', type=int)
 parser.add_argument('--wandb_api_key', type=str, default='')
 args = parser.parse_args()
 
