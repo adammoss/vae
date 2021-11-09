@@ -9,7 +9,7 @@ class ReconstructionCallback(Callback):
     def __init__(
             self,
             val_samples: Tensor,
-            max_samples: int = 8,
+            max_samples: int = 16,
     ):
         self.val_imgs, _ = val_samples
         self.val_imgs = self.val_imgs[:max_samples]
