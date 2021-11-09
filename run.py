@@ -34,7 +34,7 @@ for k, v in vars(args).items():
                 config[k][k_nested] = v_nested
 
 if args.wandb_api_key:
-    os.environ["WANDB_API_KEY"] = script_args.wandb_api_key
+    os.environ["WANDB_API_KEY"] = args.wandb_api_key
 
 wandb_logger = WandbLogger(save_dir=config['logging_params']['save_dir'],
                            name=config['logging_params']['name'],
