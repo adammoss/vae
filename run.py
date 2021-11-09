@@ -6,11 +6,14 @@ import os
 
 from models import *
 from callbacks import ImageSampler, ReconstructionCallback, LatentDimInterpolator
+from datamodules import CelebADataModule
 from experiment import VAEXperiment
 import torch.backends.cudnn as cudnn
 from pytorch_lightning import Trainer
 from pytorch_lightning.loggers import WandbLogger
 from torchinfo import summary
+from torchvision import transforms as transform_lib
+from pl_bolts.datamodules import CIFAR10DataModule, ImagenetDataModule, STL10DataModule, MNISTDataModule
 
 parser = ArgumentParser()
 parser.add_argument('-c', '--config',
@@ -50,14 +53,52 @@ np.random.seed(config['logging_params']['manual_seed'])
 cudnn.deterministic = True
 cudnn.benchmark = False
 
+# Datasets
+SetRange = transform_lib.Lambda(lambda X: 2 * X - 1.)
+
+if config['exp_params']['dataset'] == "cifar10":
+    dm_cls = CIFAR10DataModule
+elif config['exp_params']['dataset'] == "celeba":
+    dm_cls = CelebADataModule
+    dm_cls.train_transforms = transform_lib.Compose([transform_lib.RandomHorizontalFlip(),
+                                                     transform_lib.CenterCrop(148),
+                                                     transform_lib.Resize(config['exp_params']['img_size']),
+                                                     transform_lib.ToTensor(),
+                                                     SetRange])
+    dm_cls.val_transforms = transform_lib.Compose([transform_lib.RandomHorizontalFlip(),
+                                                   transform_lib.CenterCrop(148),
+                                                   transform_lib.Resize(config['exp_params']['img_size']),
+                                                   transform_lib.ToTensor(),
+                                                   SetRange])
+elif config['exp_params']['dataset'] == "stl10":
+    dm_cls = STL10DataModule
+elif config['exp_params']['dataset'] == "imagenet":
+    dm_cls = ImagenetDataModule
+elif config['exp_params']['dataset'] == "mnist":
+    dm_cls = MNISTDataModule
+else:
+    raise ValueError(f"undefined dataset {config['exp_param']['dataset']}")
+
+dm = dm_cls(data_dir=config['exp_params']['data_path'], batch_size=config['exp_params']['batch_size'])
+args.input_size = dm.size()
+
+dm.prepare_data()
+dm.setup()
+val_images = next(iter(dm.val_dataloader()))
+
+config['model_params']['in_channels'] = val_images[0].size()[1]
+
+# Model
 model = vae_models[config['model_params']['name']](**config['model_params'])
 
 summary(model, input_size=(config['exp_params']['batch_size'], config['model_params']['in_channels'],
                            config['exp_params']['img_size'], config['exp_params']['img_size']))
 
-experiment = VAEXperiment(model, config['exp_params'])
+train_M_N = config['exp_params']['batch_size'] / dm.train_length
+val_M_N = config['exp_params']['batch_size'] / dm.val_length
+test_M_N = config['exp_params']['batch_size'] / dm.test_length
 
-val_images = next(iter(experiment.val_dataloader()))
+experiment = VAEXperiment(model, config['exp_params'], train_M_N, val_M_N, test_M_N)
 
 runner = Trainer(default_root_dir=f"{wandb_logger.save_dir}",
                  min_epochs=1,
@@ -67,7 +108,7 @@ runner = Trainer(default_root_dir=f"{wandb_logger.save_dir}",
                  limit_val_batches=1.,
                  num_sanity_val_steps=5,
                  callbacks=[ImageSampler(), ReconstructionCallback(val_images), LatentDimInterpolator()],
-                 ** config['trainer_params'])
+                 **config['trainer_params'])
 
 print(f"======= Training {config['model_params']['name']} =======")
-runner.fit(experiment)
+runner.fit(experiment, datamodule=dm)

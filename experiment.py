@@ -15,7 +15,10 @@ class VAEXperiment(pl.LightningModule):
 
     def __init__(self,
                  vae_model: BaseVAE,
-                 params: dict) -> None:
+                 params: dict,
+                 train_M_N: float,
+                 val_M_N: float,
+                 test_M_N: float) -> None:
         super(VAEXperiment, self).__init__()
 
         self.model = vae_model
@@ -25,6 +28,9 @@ class VAEXperiment(pl.LightningModule):
             self.hold_graph = self.params['retain_first_backpass']
         except:
             pass
+        self.train_M_N = train_M_N
+        self.val_M_N = val_M_N
+        self.test_M_N = test_M_N
 
     def forward(self, input: Tensor, **kwargs) -> Tensor:
         return self.model(input, **kwargs)
@@ -34,7 +40,7 @@ class VAEXperiment(pl.LightningModule):
 
         results = self.forward(real_img, labels=labels)
         loss, logs = self.model.loss_function(*results,
-                                              M_N=self.params['batch_size'] / self.num_train_imgs,
+                                              M_N=self.train_M_N,
                                               optimizer_idx=optimizer_idx,
                                               batch_idx=batch_idx)
 
@@ -47,7 +53,7 @@ class VAEXperiment(pl.LightningModule):
 
         results = self.forward(real_img, labels=labels)
         loss, logs = self.model.loss_function(*results,
-                                              M_N=self.params['batch_size'] / self.num_val_imgs,
+                                              M_N=self.val_M_N,
                                               optimizer_idx=optimizer_idx,
                                               batch_idx=batch_idx)
 
@@ -94,6 +100,8 @@ class VAEXperiment(pl.LightningModule):
                 return optims, scheds
         except:
             return optims
+
+    """
 
     def train_dataloader(self):
         transform = self.data_transforms()
@@ -187,3 +195,5 @@ class VAEXperiment(pl.LightningModule):
         else:
             raise ValueError('Undefined dataset type')
         return transform
+        
+    """
