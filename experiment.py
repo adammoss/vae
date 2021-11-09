@@ -6,7 +6,7 @@ from models.types_ import *
 import pytorch_lightning as pl
 from torchvision import transforms
 import torchvision.utils as vutils
-from torchvision.datasets import CelebA, MNIST
+from torchvision.datasets import CelebA, MNIST, CIFAR10
 from astrovision.datasets import LensChallengeSpace1
 from torch.utils.data import DataLoader
 
@@ -103,6 +103,11 @@ class VAEXperiment(pl.LightningModule):
                              split="train",
                              transform=transform,
                              download=True)
+        elif self.params['dataset'] == 'cifar10':
+            dataset = CIFAR10(root=self.params['data_path'],
+                            train=True,
+                            transform=transform,
+                            download=True)
         elif self.params['dataset'] == 'mnist':
             dataset = MNIST(root=self.params['data_path'],
                             train=True,
@@ -130,6 +135,11 @@ class VAEXperiment(pl.LightningModule):
                              split="test",
                              transform=transform,
                              download=True)
+        elif self.params['dataset'] == 'cifar10':
+            dataset = CIFAR10(root=self.params['data_path'],
+                            train=False,
+                            transform=transform,
+                            download=True)
         elif self.params['dataset'] == 'mnist':
             dataset = MNIST(root=self.params['data_path'],
                             train=False,
@@ -158,6 +168,10 @@ class VAEXperiment(pl.LightningModule):
             transform = transforms.Compose([transforms.RandomHorizontalFlip(),
                                             transforms.CenterCrop(148),
                                             transforms.Resize(self.params['img_size']),
+                                            transforms.ToTensor(),
+                                            SetRange])
+        elif self.params['dataset'] == 'cifar10':
+            transform = transforms.Compose([transforms.Resize(self.params['img_size']),
                                             transforms.ToTensor(),
                                             SetRange])
         elif self.params['dataset'] == 'mnist':

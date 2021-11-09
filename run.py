@@ -1,6 +1,7 @@
 import yaml
-import argparse
+from jsonargparse import ArgumentParser
 import numpy as np
+import sys
 
 from models import *
 from callbacks import ImageSampler, ReconstructionCallback
@@ -9,19 +10,29 @@ import torch.backends.cudnn as cudnn
 from pytorch_lightning import Trainer
 from pytorch_lightning.loggers import WandbLogger
 
-parser = argparse.ArgumentParser(description='Generic runner for VAE models')
-parser.add_argument('--config', '-c',
+parser = ArgumentParser()
+parser.add_argument('-c', '--config',
                     dest="filename",
                     metavar='FILE',
                     help='path to the config file',
                     default='configs/vae.yaml')
-
+parser.add_argument('-d', '--exp_params.dataset')
+parser.add_argument('--wandb_api_key', type=str, default='')
 args = parser.parse_args()
+
 with open(args.filename, 'r') as file:
     try:
         config = yaml.safe_load(file)
     except yaml.YAMLError as exc:
         print(exc)
+for k, v in vars(args).items():
+    if k in config:
+        for k_nested, v_nested in vars(v).items():
+            if k_nested in config[k] and v_nested is not None:
+                config[k][k_nested] = v_nested
+
+if args.wandb_api_key:
+    os.environ["WANDB_API_KEY"] = script_args.wandb_api_key
 
 wandb_logger = WandbLogger(save_dir=config['logging_params']['save_dir'],
                            name=config['logging_params']['name'],
