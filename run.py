@@ -5,7 +5,7 @@ import sys
 import os
 
 from models import *
-from callbacks import ImageSampler, ReconstructionCallback
+from callbacks import ImageSampler, ReconstructionCallback, LatentDimInterpolator
 from experiment import VAEXperiment
 import torch.backends.cudnn as cudnn
 from pytorch_lightning import Trainer
@@ -65,7 +65,7 @@ runner = Trainer(default_root_dir=f"{wandb_logger.save_dir}",
                  limit_train_batches=1.,
                  limit_val_batches=1.,
                  num_sanity_val_steps=5,
-                 callbacks=[ImageSampler(), ReconstructionCallback(val_images)],
+                 callbacks=[ImageSampler(), ReconstructionCallback(val_images), LatentDimInterpolator()],
                  ** config['trainer_params'])
 
 print(f"======= Training {config['model_params']['name']} =======")

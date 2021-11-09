@@ -5,3 +5,4 @@ torchvision
 wandb
 astrovision
 jsonargparse
+torchvision
