@@ -10,6 +10,7 @@ from experiment import VAEXperiment
 import torch.backends.cudnn as cudnn
 from pytorch_lightning import Trainer
 from pytorch_lightning.loggers import WandbLogger
+from torchinfo import summary
 
 parser = ArgumentParser()
 parser.add_argument('-c', '--config',
@@ -19,6 +20,7 @@ parser.add_argument('-c', '--config',
                     default='configs/vae.yaml')
 parser.add_argument('-m', '--model_params.name')
 parser.add_argument('-d', '--exp_params.dataset')
+parser.add_argument('--model_params.in_channels', type=int)
 parser.add_argument('--trainer_params.gpus', type=int)
 parser.add_argument('--wandb_api_key', type=str, default='')
 args = parser.parse_args()
@@ -48,6 +50,10 @@ cudnn.deterministic = True
 cudnn.benchmark = False
 
 model = vae_models[config['model_params']['name']](**config['model_params'])
+
+summary(model, input_size=(config['exp_params']['batch_size'], config['model_params']['in_channels'],
+                           config['exp_params']['img_size'], config['exp_params']['img_size']))
+
 experiment = VAEXperiment(model, config['exp_params'])
 
 val_images = next(iter(experiment.val_dataloader()))
