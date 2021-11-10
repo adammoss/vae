@@ -1,6 +1,5 @@
 model_params:
   name: VanillaVAE
-  in_channels: 3
   latent_dim: 128
 
 exp_params:

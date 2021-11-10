@@ -1,11 +1,10 @@
 model_params:
-  name: 'DFCVAE'
-  in_channels: 3
+  name: DFCVAE
   latent_dim: 128
 
 exp_params:
   dataset: celeba
-  data_path: "../../shared/Data/"
+  data_path: data
   img_size: 64
   batch_size: 144 # Better to have a square number
   LR: 0.005
@@ -18,6 +17,6 @@ trainer_params:
   max_epochs: 50
 
 logging_params:
-  save_dir: "logs/"
-  name: "DFCVAE"
+  save_dir: logs/
+  name: DFCVAE
   manual_seed: 1265

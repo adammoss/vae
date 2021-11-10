@@ -1,6 +1,5 @@
 model_params:
-  name: 'DIPVAE'
-  in_channels: 3
+  name: DIPVAE
   latent_dim: 128
   lambda_diag: 0.05
   lambda_offdiag: 0.1
@@ -8,7 +7,7 @@ model_params:
 
 exp_params:
   dataset: celeba
-  data_path: "../../shared/momo/Data/"
+  data_path: data
   img_size: 64
   batch_size: 144 # Better to have a square number
   LR: 0.001
@@ -21,6 +20,6 @@ trainer_params:
   max_epochs: 50
 
 logging_params:
-  save_dir: "logs/"
-  name: "DIPVAE"
+  save_dir: logs/
+  name: DIPVAE
   manual_seed: 1265

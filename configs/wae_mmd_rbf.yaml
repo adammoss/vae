@@ -1,13 +1,12 @@
 model_params:
-  name: 'WAE_MMD'
-  in_channels: 3
+  name: WAE_MMD
   latent_dim: 128
   reg_weight: 5000
-  kernel_type: 'rbf'
+  kernel_type: rbf
 
 exp_params:
   dataset: celeba
-  data_path: "../../shared/Data/"
+  data_path: data
   img_size: 64
   batch_size: 144 # Better to have a square number
   LR: 0.005
@@ -20,8 +19,8 @@ trainer_params:
   max_epochs: 50
 
 logging_params:
-  save_dir: "logs/"
-  name: "WassersteinVAE_RBF"
+  save_dir: logs/
+  name: WassersteinVAE_RBF
   manual_seed: 1265
 
 

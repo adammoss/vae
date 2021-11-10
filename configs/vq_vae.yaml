@@ -1,6 +1,5 @@
 model_params:
-  name: 'VQVAE'
-  in_channels: 3
+  name: VQVAE
   embedding_dim: 64
   num_embeddings: 512
   img_size: 64
@@ -8,7 +7,7 @@ model_params:
 
 exp_params:
   dataset: celeba
-  data_path: "../../shared/momo/Data/"
+  data_path: data
   img_size: 64
   batch_size: 144 # Better to have a square number
   LR: 0.001
@@ -21,6 +20,6 @@ trainer_params:
   max_epochs: 30
 
 logging_params:
-  save_dir: "logs/"
-  name: "VQVAE"
+  save_dir: logs/
+  name: VQVAE
   manual_seed: 1265

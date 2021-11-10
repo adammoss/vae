@@ -1,15 +1,14 @@
 model_params:
-  name: 'SWAE'
-  in_channels: 3
+  name: SWAE
   latent_dim: 128
   reg_weight: 100
   wasserstein_deg: 2.0
   num_projections: 200
-  projection_dist: "normal" #"cauchy"
+  projection_dist: normal #"cauchy"
 
 exp_params:
   dataset: celeba
-  data_path: "../../shared/momo/Data/"
+  data_path: data
   img_size: 64
   batch_size: 144 # Better to have a square number
   LR: 0.005
@@ -22,8 +21,8 @@ trainer_params:
   max_epochs: 50
 
 logging_params:
-  save_dir: "logs/"
-  name: "SWAE"
+  save_dir: logs/
+  name: SWAE
   manual_seed: 1265
 
 

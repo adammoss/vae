@@ -1,13 +1,12 @@
 model_params:
-  name: 'HVAE'
-  in_channels: 3
+  name: HVAE
   latent1_dim: 64
   latent2_dim: 64
   pseudo_input_size: 128
 
 exp_params:
   dataset: celeba
-  data_path: "../../shared/Data/"
+  data_path: data
   img_size: 64
   batch_size: 144 # Better to have a square number
   LR: 0.005
@@ -20,6 +19,6 @@ trainer_params:
   max_epochs: 50
 
 logging_params:
-  save_dir: "logs/"
-  name: "VampVAE"
+  save_dir: logs/
+  name: HVAE
   manual_seed: 1265
