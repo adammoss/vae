@@ -6,7 +6,7 @@ import os
 
 from models import *
 from callbacks import ImageSampler, ReconstructionCallback, LatentDimInterpolator
-from datamodules import CelebADataModule
+from datamodules import CelebADataModule, LensChallengeSpace1DataModule
 from experiment import VAEXperiment
 import torch.backends.cudnn as cudnn
 from pytorch_lightning import Trainer
@@ -55,10 +55,9 @@ cudnn.benchmark = False
 
 # Datasets
 SetRange = transform_lib.Lambda(lambda X: 2 * X - 1.)
+ArcSinh = transform_lib.Lambda(lambda X: torch.asinh(X))
 
-if config['exp_params']['dataset'] == "cifar10":
-    dm_cls = CIFAR10DataModule
-elif config['exp_params']['dataset'] == "celeba":
+if config['exp_params']['dataset'] == "celeba":
     dm_cls = CelebADataModule
     dm_cls.train_transforms = transform_lib.Compose([transform_lib.RandomHorizontalFlip(),
                                                      transform_lib.CenterCrop(148),
@@ -70,12 +69,25 @@ elif config['exp_params']['dataset'] == "celeba":
                                                    transform_lib.Resize(config['exp_params']['img_size']),
                                                    transform_lib.ToTensor(),
                                                    SetRange])
-elif config['exp_params']['dataset'] == "stl10":
-    dm_cls = STL10DataModule
-elif config['exp_params']['dataset'] == "imagenet":
-    dm_cls = ImagenetDataModule
 elif config['exp_params']['dataset'] == "mnist":
     dm_cls = MNISTDataModule
+    dm_cls.train_transforms = transforms.Compose([transforms_lib.Resize(self.params['img_size']),
+                                                  transforms_lib.ToTensor(),
+                                                  SetRange])
+    dm_cls.val_transforms = transforms.Compose([transforms_lib.Resize(self.params['img_size']),
+                                                transforms_lib.ToTensor(),
+                                                SetRange])
+elif config['exp_params']['dataset'] == "lens":
+    dm_cls = LensChallengeSpace1DataModule
+
+    dm_cls.train_transforms = transform_lib.Compose([transform_lib.Resize(config['exp_params']['img_size']),
+                                                     transform_lib.ToTensor(),
+                                                     transform_lib.Normalize(1.0E-13, 1.0E-12),
+                                                     ArcSinh])
+    dm_cls.val_transforms = transform_lib.Compose([transform_lib.Resize(config['exp_params']['img_size']),
+                                                   transform_lib.ToTensor(),
+                                                   transform_lib.Normalize(1.0E-13, 1.0E-12),
+                                                   ArcSinh])
 else:
     raise ValueError(f"undefined dataset {config['exp_param']['dataset']}")
 
@@ -93,6 +105,9 @@ model = vae_models[config['model_params']['name']](**config['model_params'])
 
 summary(model, input_size=(config['exp_params']['batch_size'], config['model_params']['in_channels'],
                            config['exp_params']['img_size'], config['exp_params']['img_size']))
+
+print(len(dm.dataset_train), len(dm.dataset_val), len(dm.dataset_test))
+print(len(dm.train_dataloader()), len(dm.val_dataloader()), len(dm.test_dataloader()))
 
 train_M_N = config['exp_params']['batch_size'] / dm.train_length
 val_M_N = config['exp_params']['batch_size'] / dm.val_length

@@ -7,6 +7,7 @@ from torchvision.datasets import CelebA
 
 
 class CelebADataModule(LightningDataModule):
+    EXTRA_ARGS: dict = {}
     name = "celeb"
     dataset_cls = CelebA
     dims = (3, 178, 218)
@@ -56,18 +57,27 @@ class CelebADataModule(LightningDataModule):
     def prepare_data(self) -> None:
         """Downloads the train, validation and test split."""
         dataset = CelebA(self.data_dir, split="train", download=True, transform=transform_lib.ToTensor())
-        self.train_length = len(dataset)
         dataset = CelebA(self.data_dir, split="valid", download=True, transform=transform_lib.ToTensor())
-        self.val_length = len(dataset)
         dataset = CelebA(self.data_dir, split="test", download=True, transform=transform_lib.ToTensor())
-        self.test_length = len(dataset)
+
+    def setup(self, stage: Optional[str] = None) -> None:
+        """Creates train, val, and test dataset."""
+        if stage == "fit" or stage is None:
+            train_transforms = self.default_transforms() if self.train_transforms is None else self.train_transforms
+            val_transforms = self.default_transforms() if self.val_transforms is None else self.val_transforms
+
+            self.dataset_train = self.dataset_cls(self.data_dir, split="train", transform=train_transforms, **self.EXTRA_ARGS)
+            self.dataset_val = self.dataset_cls(self.data_dir, split="valid", transform=val_transforms, **self.EXTRA_ARGS)
+
+        if stage == "test" or stage is None:
+            test_transforms = self.default_transforms() if self.test_transforms is None else self.test_transforms
+            self.dataset_test = self.dataset_cls(
+                self.data_dir, split="test", transform=test_transforms, **self.EXTRA_ARGS
+            )
 
     def train_dataloader(self) -> DataLoader:
-        transforms = self._default_transforms() if self.train_transforms is None else self.train_transforms
-
-        dataset = CelebA(self.data_dir, split="train", download=False, transform=transforms)
         loader = DataLoader(
-            dataset,
+            self.dataset_train,
             batch_size=self.batch_size,
             shuffle=self.shuffle,
             num_workers=self.num_workers,
@@ -77,11 +87,8 @@ class CelebADataModule(LightningDataModule):
         return loader
 
     def val_dataloader(self) -> DataLoader:
-        transforms = self._default_transforms() if self.val_transforms is None else self.val_transforms
-
-        dataset = CelebA(self.data_dir, split="valid", download=False, transform=transforms)
         loader = DataLoader(
-            dataset,
+            self.dataset_val,
             batch_size=self.batch_size,
             shuffle=self.shuffle,
             num_workers=self.num_workers,
@@ -91,11 +98,8 @@ class CelebADataModule(LightningDataModule):
         return loader
 
     def test_dataloader(self) -> DataLoader:
-        transforms = self._default_transforms() if self.test_transforms is None else self.test_transforms
-
-        dataset = CelebA(self.data_dir, split="test", download=False, transform=transforms)
         loader = DataLoader(
-            dataset,
+            self.dataset_test,
             batch_size=self.batch_size,
             shuffle=self.shuffle,
             num_workers=self.num_workers,
@@ -104,7 +108,7 @@ class CelebADataModule(LightningDataModule):
         )
         return loader
 
-    def _default_transforms(self) -> Callable:
+    def default_transforms(self) -> Callable:
         if self.normalize:
             transforms = transform_lib.Compose([transform_lib.ToTensor()])
         else:
