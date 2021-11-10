@@ -11,7 +11,7 @@ class ImageSampler(Callback):
     def __init__(
             self,
             img_size: Tuple[int, ...] = None,
-            num_samples: int = 16,
+            num_samples: int = 64,
             normalize: bool = True,
     ):
         self.img_size = img_size
