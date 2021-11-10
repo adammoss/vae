@@ -71,12 +71,12 @@ if config['exp_params']['dataset'] == "celeba":
                                                    SetRange])
 elif config['exp_params']['dataset'] == "mnist":
     dm_cls = MNISTDataModule
-    dm_cls.train_transforms = transforms.Compose([transforms_lib.Resize(self.params['img_size']),
-                                                  transforms_lib.ToTensor(),
-                                                  SetRange])
-    dm_cls.val_transforms = transforms.Compose([transforms_lib.Resize(self.params['img_size']),
-                                                transforms_lib.ToTensor(),
-                                                SetRange])
+    dm_cls.train_transforms = transform_lib.Compose([transform_lib.Resize(config['exp_params']['img_size']),
+                                                     transform_lib.ToTensor(),
+                                                     SetRange])
+    dm_cls.val_transforms = transform_lib.Compose([transform_lib.Resize(config['exp_params']['img_size']),
+                                                   transform_lib.ToTensor(),
+                                                   SetRange])
 elif config['exp_params']['dataset'] == "lens":
     dm_cls = LensChallengeSpace1DataModule
 

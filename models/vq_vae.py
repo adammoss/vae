@@ -209,9 +209,9 @@ class VQVAE(BaseVAE):
         recons_loss = F.mse_loss(recons, input)
 
         loss = recons_loss + vq_loss
-        return {'loss': loss,
-                'Reconstruction_Loss': recons_loss,
-                'VQ_Loss': vq_loss}
+        return loss, {'loss': loss,
+                      'Reconstruction_Loss': recons_loss,
+                      'VQ_Loss': vq_loss}
 
     def sample(self,
                num_samples: int,
