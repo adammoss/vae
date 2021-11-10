@@ -106,12 +106,9 @@ model = vae_models[config['model_params']['name']](**config['model_params'])
 summary(model, input_size=(config['exp_params']['batch_size'], config['model_params']['in_channels'],
                            config['exp_params']['img_size'], config['exp_params']['img_size']))
 
-print(len(dm.dataset_train), len(dm.dataset_val), len(dm.dataset_test))
-print(len(dm.train_dataloader()), len(dm.val_dataloader()), len(dm.test_dataloader()))
-
-train_M_N = config['exp_params']['batch_size'] / dm.train_length
-val_M_N = config['exp_params']['batch_size'] / dm.val_length
-test_M_N = config['exp_params']['batch_size'] / dm.test_length
+train_M_N = config['exp_params']['batch_size'] / len(dm.dataset_train)
+val_M_N = config['exp_params']['batch_size'] / len(dm.dataset_val)
+test_M_N = config['exp_params']['batch_size'] / len(dm.dataset_test)
 
 experiment = VAEXperiment(model, config['exp_params'], train_M_N, val_M_N, test_M_N)
 
