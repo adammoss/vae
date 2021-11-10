@@ -16,6 +16,7 @@ class LogCoshVAE(BaseVAE):
                  **kwargs) -> None:
         super(LogCoshVAE, self).__init__()
 
+        input_channels = in_channels
         self.latent_dim = latent_dim
         self.alpha = alpha
         self.beta = beta
@@ -70,7 +71,7 @@ class LogCoshVAE(BaseVAE):
                                output_padding=1),
             nn.BatchNorm2d(hidden_dims[-1]),
             nn.LeakyReLU(),
-            nn.Conv2d(hidden_dims[-1], out_channels=3,
+            nn.Conv2d(hidden_dims[-1], out_channels=input_channels,
                       kernel_size=3, padding=1),
             nn.Tanh())
 
