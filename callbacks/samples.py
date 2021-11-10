@@ -19,9 +19,6 @@ class ImageSampler(Callback):
         self.normalize = normalize
 
     def on_validation_end(self, trainer: Trainer, pl_module: LightningModule) -> None:
-        rand_v = torch.rand((self.num_samples, pl_module.model.latent_dim), device=pl_module.device)
-        p = torch.distributions.Normal(torch.zeros_like(rand_v), torch.ones_like(rand_v))
-        z = p.rsample()
         with torch.no_grad():
             pl_module.model.eval()
             samples = pl_module.model.sample(self.num_samples, pl_module.device)

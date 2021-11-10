@@ -110,7 +110,19 @@ train_M_N = config['exp_params']['batch_size'] / len(dm.dataset_train)
 val_M_N = config['exp_params']['batch_size'] / len(dm.dataset_val)
 test_M_N = config['exp_params']['batch_size'] / len(dm.dataset_test)
 
-experiment = VAEXperiment(model, config['exp_params'], train_M_N, val_M_N, test_M_N)
+try:
+    experiment = VAEXperiment(model, config['exp_params'], train_M_N, val_M_N, test_M_N)
+    with torch.no_grad():
+        experiment.model.eval()
+        samples = experiment.model.sample(1, experiment.device)
+    experiment.model.train()
+except:
+    samples = None
+
+if samples is not None:
+    callbacks = [ImageSampler(), ReconstructionCallback(val_images), LatentDimInterpolator()]
+else:
+    callbacks = [ReconstructionCallback(val_images)]
 
 runner = Trainer(default_root_dir=f"{wandb_logger.save_dir}",
                  min_epochs=1,
@@ -119,7 +131,7 @@ runner = Trainer(default_root_dir=f"{wandb_logger.save_dir}",
                  limit_train_batches=1.,
                  limit_val_batches=1.,
                  num_sanity_val_steps=5,
-                 callbacks=[ImageSampler(), ReconstructionCallback(val_images), LatentDimInterpolator()],
+                 callbacks=callbacks,
                  **config['trainer_params'])
 
 print(f"======= Training {config['model_params']['name']} =======")
