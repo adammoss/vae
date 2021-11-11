@@ -166,7 +166,7 @@ class VectorQuantizedVAE(nn.Module):
         x_tilde = self.decoder(z_q_x)
         return x_tilde
 
-    def forward(self, x):
+    def forward(self, x, **kwargs):
         z_e_x = self.encoder(x)
         z_q_x_st, z_q_x = self.codebook.straight_through(z_e_x)
         x_tilde = self.decoder(z_q_x_st)
