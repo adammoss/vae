@@ -3,6 +3,23 @@ from torch import nn
 from .types_ import *
 
 
+def to_scalar(arr):
+    if type(arr) == list:
+        return [x.item() for x in arr]
+    else:
+        return arr.item()
+
+
+def weights_init(m):
+    classname = m.__class__.__name__
+    if classname.find('Conv') != -1:
+        try:
+            nn.init.xavier_uniform_(m.weight.data)
+            m.bias.data.fill_(0)
+        except AttributeError:
+            print("Skipping initialization of ", classname)
+
+
 class VQEmbedding(nn.Module):
     def __init__(self, K, D):
         super().__init__()
@@ -44,27 +61,27 @@ class ResBlock(nn.Module):
 
 
 class VectorQuantizedVAE(nn.Module):
-    def __init__(self, input_dim, dim, K=512, beta=0.25, **kwargs):
+    def __init__(self, in_channels, embedding_dim, K=512, beta=0.25, **kwargs):
         super().__init__()
         self.encoder = nn.Sequential(
-            nn.Conv2d(input_dim, dim, 4, 2, 1),
-            nn.BatchNorm2d(dim),
+            nn.Conv2d(in_channels, embedding_dim, 4, 2, 1),
+            nn.BatchNorm2d(embedding_dim),
             nn.ReLU(True),
-            nn.Conv2d(dim, dim, 4, 2, 1),
-            ResBlock(dim),
-            ResBlock(dim),
+            nn.Conv2d(embedding_dim, embedding_dim, 4, 2, 1),
+            ResBlock(embedding_dim),
+            ResBlock(embedding_dim),
         )
 
-        self.codebook = VQEmbedding(K, dim)
+        self.codebook = VQEmbedding(K, embedding_dim)
 
         self.decoder = nn.Sequential(
-            ResBlock(dim),
-            ResBlock(dim),
+            ResBlock(embedding_dim),
+            ResBlock(embedding_dim),
             nn.ReLU(True),
-            nn.ConvTranspose2d(dim, dim, 4, 2, 1),
-            nn.BatchNorm2d(dim),
+            nn.ConvTranspose2d(embedding_dim, embedding_dim, 4, 2, 1),
+            nn.BatchNorm2d(embedding_dim),
             nn.ReLU(True),
-            nn.ConvTranspose2d(dim, input_dim, 4, 2, 1),
+            nn.ConvTranspose2d(embedding_dim, in_channels, 4, 2, 1),
             nn.Tanh()
         )
 
