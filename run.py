@@ -61,6 +61,7 @@ ArcSinh = transform_lib.Lambda(lambda X: torch.asinh(X))
 if config['exp_params']['dataset'] == "celeba":
     # CelebA is already normalized between (0, 1)
     dm_cls = CelebADataModule
+    output_activation = nn.Tanh()
     dm_cls.train_transforms = transform_lib.Compose([transform_lib.RandomHorizontalFlip(),
                                                      transform_lib.CenterCrop(148),
                                                      transform_lib.Resize(config['exp_params']['img_size']),
@@ -74,7 +75,7 @@ if config['exp_params']['dataset'] == "celeba":
 elif config['exp_params']['dataset'] == "mnist":
     # MNIST is already normalized between (0, 1)
     dm_cls = MNISTDataModule
-    output_activation = nn.Tanh
+    output_activation = nn.Tanh()
     dm_cls.train_transforms = transform_lib.Compose([transform_lib.Resize(config['exp_params']['img_size']),
                                                      transform_lib.ToTensor(),
                                                      SetRange])
