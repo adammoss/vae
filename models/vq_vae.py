@@ -215,11 +215,6 @@ class VQVAE(BaseVAE):
                       'Reconstruction_Loss': recons_loss,
                       'VQ_Loss': vq_loss}
 
-    def sample(self,
-               num_samples: int,
-               current_device: Union[int, str], **kwargs) -> Tensor:
-        raise Warning('VQVAE sampler is not implemented.')
-
     def generate(self, x: Tensor, **kwargs) -> Tensor:
         """
         Given an input image x, returns the reconstructed image
