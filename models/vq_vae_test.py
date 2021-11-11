@@ -1,7 +1,8 @@
 import torch
 from torch import nn
-from .types_ import *
 from torch.autograd import Function
+from torch.nn import functional as F
+from .types_ import *
 
 
 class VectorQuantization(Function):
