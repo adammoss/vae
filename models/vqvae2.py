@@ -246,7 +246,7 @@ class VQVAE2(nn.Module):
 
         recons_loss = F.mse_loss(recons, input)
 
-        loss = recons_loss + vq_loss
+        loss = recons_loss + 0.25 * vq_loss
         return loss, {'loss': loss,
                       'Reconstruction_Loss': recons_loss,
                       'VQ_Loss': vq_loss}
