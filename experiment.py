@@ -38,7 +38,7 @@ class VAEXperiment(pl.LightningModule):
     def training_step(self, batch, batch_idx, optimizer_idx=0):
         real_img, labels = batch
 
-        results = self.forward(real_img, labels=labels)
+        results = self.forward(real_img)
         loss, logs = self.model.loss_function(*results,
                                               M_N=self.train_M_N,
                                               optimizer_idx=optimizer_idx,
@@ -51,7 +51,7 @@ class VAEXperiment(pl.LightningModule):
     def validation_step(self, batch, batch_idx, optimizer_idx=0):
         real_img, labels = batch
 
-        results = self.forward(real_img, labels=labels)
+        results = self.forward(real_img)
         loss, logs = self.model.loss_function(*results,
                                               M_N=self.val_M_N,
                                               optimizer_idx=optimizer_idx,
