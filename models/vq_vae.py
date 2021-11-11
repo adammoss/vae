@@ -80,11 +80,13 @@ class VQVAE(BaseVAE):
                  embedding_dim: int,
                  num_embeddings: int,
                  hidden_dims: List = None,
+                 output_activation=nn.Tanh(),
                  beta: float = 0.25,
                  img_size: int = 64,
                  **kwargs) -> None:
         super(VQVAE, self).__init__()
 
+        input_channels = in_channels
         self.embedding_dim = embedding_dim
         self.num_embeddings = num_embeddings
         self.img_size = img_size
@@ -161,10 +163,10 @@ class VQVAE(BaseVAE):
         modules.append(
             nn.Sequential(
                 nn.ConvTranspose2d(hidden_dims[-1],
-                                   out_channels=3,
+                                   out_channels=input_channels,
                                    kernel_size=4,
                                    stride=2, padding=1),
-                nn.Tanh()))
+                output_activation))
 
         self.decoder = nn.Sequential(*modules)
 
