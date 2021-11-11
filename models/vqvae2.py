@@ -256,3 +256,12 @@ class VQVAE2(nn.Module):
         return loss, {'loss': loss,
                       'Reconstruction_Loss': recons_loss,
                       'VQ_Loss': vq_loss}
+
+    def generate(self, x: Tensor, **kwargs) -> Tensor:
+        """
+        Given an input image x, returns the reconstructed image
+        :param x: (Tensor) [B x C x H x W]
+        :return: (Tensor) [B x C x H x W]
+        """
+
+        return self.forward(x)[0]
