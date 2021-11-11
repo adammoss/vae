@@ -85,15 +85,19 @@ elif config['exp_params']['dataset'] == "mnist":
                                                    SetRange])
 elif config['exp_params']['dataset'] == "lens":
     dm_cls = LensChallengeSpace1DataModule
-    output_activation = Identity()
-    dm_cls.train_transforms = transform_lib.Compose([transform_lib.Resize(config['exp_params']['img_size']),
+    output_activation = nn.Tanh()
+    dm_cls.train_transforms = transform_lib.Compose([transform_lib.CenterCrop(config['exp_params']['img_size']),
                                                      transform_lib.ToTensor(),
-                                                     transform_lib.Normalize(1.0E-13, 1.0E-12),
-                                                     ArcSinh])
-    dm_cls.val_transforms = transform_lib.Compose([transform_lib.Resize(config['exp_params']['img_size']),
+                                                     transform_lib.Normalize(0.0, 1.0e-12),
+                                                     ArcSinh,
+                                                     transform_lib.Normalize(2.0, 5.0)
+                                                     ])
+    dm_cls.val_transforms = transform_lib.Compose([transform_lib.CenterCrop(config['exp_params']['img_size']),
                                                    transform_lib.ToTensor(),
-                                                   transform_lib.Normalize(1.0E-13, 1.0E-12),
-                                                   ArcSinh])
+                                                   transform_lib.Normalize(0.0, 1.0e-12),
+                                                   ArcSinh,
+                                                   transform_lib.Normalize(2.0, 5.0)
+                                                   ])
 else:
     raise ValueError(f"undefined dataset {config['exp_param']['dataset']}")
 
