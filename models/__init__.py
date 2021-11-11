@@ -23,7 +23,8 @@ from .vq_vae import *
 from .betatc_vae import *
 from .dip_vae import *
 from .resnet_vae import *
-from .vqvae2 import *
+from .vq_vae2 import *
+from .vq_vae_test import *
 
 # Aliases
 AE = VanillaAE
@@ -31,6 +32,7 @@ VAE = VanillaVAE
 GaussianVAE = VanillaVAE
 CVAE = ConditionalVAE
 GumbelVAE = CategoricalVAE
+VQVAETEST = VectorQuantizedVAE
 
 vae_models = {'HVAE': HVAE,
               'LVAE': LVAE,
@@ -55,4 +57,5 @@ vae_models = {'HVAE': HVAE,
               'ConditionalVAE': ConditionalVAE,
               'CategoricalVAE': CategoricalVAE,
               'ResNetVAE': ResNetVAE,
-              'VQVAE2': VQVAE2}
+              'VQVAE2': VQVAE2,
+              'VQVAETEST': VQVAETEST}

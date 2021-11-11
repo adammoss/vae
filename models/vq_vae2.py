@@ -164,6 +164,7 @@ class VQVAE2(nn.Module):
         n_res_channel=32,
         embed_dim=64,
         n_embed=512,
+        beta=0.25,
         decay=0.99,
         **kwargs
     ):
@@ -189,6 +190,7 @@ class VQVAE2(nn.Module):
             n_res_channel,
             stride=4,
         )
+        self.beta = beta
 
     def forward(self, input, **kwargs):
         quant_t, quant_b, diff, _, _ = self.encode(input)
@@ -246,7 +248,7 @@ class VQVAE2(nn.Module):
 
         recons_loss = F.mse_loss(recons, input)
 
-        loss = recons_loss + 0.25 * vq_loss
+        loss = recons_loss + self.beta * vq_loss
         return loss, {'loss': loss,
                       'Reconstruction_Loss': recons_loss,
                       'VQ_Loss': vq_loss}
