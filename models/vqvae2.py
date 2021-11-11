@@ -165,6 +165,7 @@ class VQVAE2(nn.Module):
         embed_dim=64,
         n_embed=512,
         decay=0.99,
+        **kwargs
     ):
         super().__init__()
 
