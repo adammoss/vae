@@ -158,7 +158,7 @@ class Decoder(nn.Module):
 class VQVAE2(nn.Module):
     def __init__(
         self,
-        in_channel=3,
+        in_channels=3,
         channel=128,
         n_res_block=2,
         n_res_channel=32,
@@ -169,7 +169,7 @@ class VQVAE2(nn.Module):
     ):
         super().__init__()
 
-        self.enc_b = Encoder(in_channel, channel, n_res_block, n_res_channel, stride=4)
+        self.enc_b = Encoder(in_channels, channel, n_res_block, n_res_channel, stride=4)
         self.enc_t = Encoder(channel, channel, n_res_block, n_res_channel, stride=2)
         self.quantize_conv_t = nn.Conv2d(channel, embed_dim, 1)
         self.quantize_t = Quantize(embed_dim, n_embed)
@@ -183,7 +183,7 @@ class VQVAE2(nn.Module):
         )
         self.dec = Decoder(
             embed_dim + embed_dim,
-            in_channel,
+            in_channels,
             channel,
             n_res_block,
             n_res_channel,
