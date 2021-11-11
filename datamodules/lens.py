@@ -56,7 +56,7 @@ class LensChallengeSpace1DataModule(VisionDataModule):
     def num_classes(self) -> int:
         return 40
 
-    def _default_transforms(self) -> Callable:
+    def default_transforms(self) -> Callable:
         if self.normalize:
             transforms = transform_lib.Compose([transform_lib.ToTensor()])
         else:

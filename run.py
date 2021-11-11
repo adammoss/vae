@@ -5,6 +5,7 @@ import sys
 import os
 
 from models import *
+from models.utils import Identity
 from callbacks import ImageSampler, ReconstructionCallback, LatentDimInterpolator
 from datamodules import CelebADataModule, LensChallengeSpace1DataModule
 from experiment import VAEXperiment
@@ -58,6 +59,7 @@ SetRange = transform_lib.Lambda(lambda X: 2 * X - 1.)
 ArcSinh = transform_lib.Lambda(lambda X: torch.asinh(X))
 
 if config['exp_params']['dataset'] == "celeba":
+    # CelebA is already normalized between (0, 1)
     dm_cls = CelebADataModule
     dm_cls.train_transforms = transform_lib.Compose([transform_lib.RandomHorizontalFlip(),
                                                      transform_lib.CenterCrop(148),
@@ -70,7 +72,9 @@ if config['exp_params']['dataset'] == "celeba":
                                                    transform_lib.ToTensor(),
                                                    SetRange])
 elif config['exp_params']['dataset'] == "mnist":
+    # MNIST is already normalized between (0, 1)
     dm_cls = MNISTDataModule
+    output_activation = nn.Tanh
     dm_cls.train_transforms = transform_lib.Compose([transform_lib.Resize(config['exp_params']['img_size']),
                                                      transform_lib.ToTensor(),
                                                      SetRange])
@@ -79,7 +83,7 @@ elif config['exp_params']['dataset'] == "mnist":
                                                    SetRange])
 elif config['exp_params']['dataset'] == "lens":
     dm_cls = LensChallengeSpace1DataModule
-
+    output_activation = Identity()
     dm_cls.train_transforms = transform_lib.Compose([transform_lib.Resize(config['exp_params']['img_size']),
                                                      transform_lib.ToTensor(),
                                                      transform_lib.Normalize(1.0E-13, 1.0E-12),
@@ -101,7 +105,7 @@ val_images = next(iter(dm.val_dataloader()))
 config['model_params']['in_channels'] = val_images[0].size()[1]
 
 # Model
-model = vae_models[config['model_params']['name']](**config['model_params'])
+model = vae_models[config['model_params']['name']](output_activation=output_activation, **config['model_params'])
 
 summary(model, input_size=(config['exp_params']['batch_size'], config['model_params']['in_channels'],
                            config['exp_params']['img_size'], config['exp_params']['img_size']))

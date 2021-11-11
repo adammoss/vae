@@ -22,6 +22,7 @@ from .miwae import *
 from .vq_vae import *
 from .betatc_vae import *
 from .dip_vae import *
+from .resnet_vae import *
 
 # Aliases
 AE = VanillaAE
@@ -51,4 +52,5 @@ vae_models = {'HVAE': HVAE,
               'VanillaAE': VanillaAE,
               'VanillaVAE': VanillaVAE,
               'ConditionalVAE': ConditionalVAE,
-              'CategoricalVAE': CategoricalVAE}
+              'CategoricalVAE': CategoricalVAE,
+              'ResNetVAE': ResNetVAE}

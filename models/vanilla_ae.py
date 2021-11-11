@@ -11,6 +11,7 @@ class VanillaAE(BaseVAE):
                  in_channels: int,
                  latent_dim: int,
                  hidden_dims: List = None,
+                 output_activation=nn.Tanh(),
                  **kwargs) -> None:
         super(VanillaAE, self).__init__()
 
@@ -68,8 +69,7 @@ class VanillaAE(BaseVAE):
             nn.LeakyReLU(),
             nn.Conv2d(hidden_dims[-1], out_channels=input_channels,
                       kernel_size=3, padding=1),
-            )
-            #nn.Tanh())
+            output_activation)
 
     def encode(self, input: Tensor) -> List[Tensor]:
         """
