@@ -157,7 +157,7 @@ class Decoder(nn.Module):
 
         self.blocks = nn.Sequential(*blocks)
 
-    def forward(self, input, **kwargs):
+    def forward(self, input):
         return self.blocks(input)
 
 
@@ -196,7 +196,7 @@ class VQVAE2(nn.Module):
             stride=4,
         )
 
-    def forward(self, input):
+    def forward(self, input, **kwargs):
         quant_t, quant_b, diff, _, _ = self.encode(input)
         dec = self.decode(quant_t, quant_b)
 
