@@ -3,14 +3,14 @@ model_params:
   embedding_dim: 256
   num_embeddings: 512
   img_size: 64
-  beta: 0.25
+  beta: 1.0
 
 exp_params:
   dataset: celeba
   data_path: data
   img_size: 64
-  batch_size: 144 # Better to have a square number
-  LR: 0.001
+  batch_size: 128 # Better to have a square number
+  LR: 0.0002
   weight_decay: 0.0
   scheduler_gamma: 0.0
 
