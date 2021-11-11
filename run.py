@@ -116,23 +116,8 @@ val_M_N = config['exp_params']['batch_size'] / len(dm.dataset_val)
 test_M_N = config['exp_params']['batch_size'] / len(dm.dataset_test)
 
 experiment = VAEXperiment(model, config['exp_params'], train_M_N, val_M_N, test_M_N)
-with torch.no_grad():
-    experiment.model.eval()
-    samples = experiment.model.sample(1, experiment.device)
-experiment.model.train()
-print(samples)
 
-
-try:
-    experiment = VAEXperiment(model, config['exp_params'], train_M_N, val_M_N, test_M_N)
-    with torch.no_grad():
-        experiment.model.eval()
-        samples = experiment.model.sample(1, experiment.device)
-    experiment.model.train()
-except:
-    samples = None
-
-if samples is not None:
+if getattr(experiment.model, "sample", None):
     callbacks = [ImageSampler(), ReconstructionCallback(val_images), LatentDimInterpolator()]
 else:
     callbacks = [ReconstructionCallback(val_images)]
