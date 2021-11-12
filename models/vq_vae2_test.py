@@ -1,14 +1,14 @@
 from torch import nn
 from torch.nn import functional as F
-from pytorch_generative.models.vae.vq_vae import VectorQuantizedVAE as MyVQVAE
+from pytorch_generative.models.vae.vq_vae_2 import VectorQuantizedVAE2 as MyVQVAE2
 from .types_ import *
 
 
-class VectorQuantizedVAETest2(nn.Module):
+class VectorQuantizedVAE2(nn.Module):
     def __init__(self, in_channels, embedding_dim, K=512, beta=0.25, **kwargs):
         super().__init__()
 
-        self.model = MyVQVAE(in_channels=in_channels, out_channels=in_channels,
+        self.model = MyVQVAE2(in_channels=in_channels, out_channels=in_channels,
                                         embedding_dim=embedding_dim)
 
     def forward(self, x, **kwargs):
@@ -29,7 +29,7 @@ class VectorQuantizedVAETest2(nn.Module):
 
         recons_loss = F.mse_loss(recons, input)
 
-        loss = recons_loss + vq_loss
+        loss = recons_loss + 0.25 * vq_loss
         return loss, {'loss': loss,
                       'Reconstruction_Loss': recons_loss,
                       'VQ_Loss': vq_loss}

@@ -27,6 +27,7 @@ from .vq_vae2 import *
 from .vq_vae_test import *
 from .vq_vae_test2 import *
 from .vd_vae import *
+from .vq_vae2_test import *
 
 # Aliases
 AE = VanillaAE
@@ -35,7 +36,7 @@ GaussianVAE = VanillaVAE
 CVAE = ConditionalVAE
 GumbelVAE = CategoricalVAE
 VQVAETEST = VectorQuantizedVAE
-VQVAETEST2 = VectorQuantizedVAE2
+VQVAETEST2 = VectorQuantizedVAETest2
 VDVAE = VeryDeepVAE
 
 vae_models = {'HVAE': HVAE,
@@ -64,4 +65,5 @@ vae_models = {'HVAE': HVAE,
               'VQVAE2': VQVAE2,
               'VQVAETEST': VQVAETEST,
               'VQVAETEST2': VQVAETEST2,
-              'VDVAE': VDVAE}
+              'VDVAE': VDVAE,
+              'VQVAE2TEST': VectorQuantizedVAE2}
