@@ -9,7 +9,8 @@ class VeryDeepVAE(nn.Module):
         super().__init__()
 
         self.model = MyVeryDeepVAE(in_channels=in_channels, out_channels=in_channels,
-                                   input_resolution=input_resolution)
+                                   input_resolution=input_resolution, latent_channels = 16,
+                                   hidden_channels = 64, bottleneck_channels = 32)
 
     def forward(self, x, **kwargs):
         preds, kl_div = self.model(x)
@@ -25,14 +26,15 @@ class VeryDeepVAE(nn.Module):
         """
         recons = args[0]
         input = args[1]
-        kl_loss = args[2].mean()
+        kl_loss = args[2]
 
-        recons_loss = F.mse_loss(recons, input)
+        recons_loss = F.binary_cross_entropy_with_logits(recons, input, reduction="none")
+        #recons_loss = F.mse_loss(recons, input)
 
         loss = recons_loss + kl_loss
-        return loss, {'loss': loss,
-                      'Reconstruction_Loss': recons_loss,
-                      'KL_Loss': kl_loss}
+        return loss, {'loss': loss.mean(),
+                      'Reconstruction_Loss': recons_loss.mean(),
+                      'KL_Loss': kl_loss.mean()}
 
     def generate(self, x: Tensor, **kwargs) -> Tensor:
         """
