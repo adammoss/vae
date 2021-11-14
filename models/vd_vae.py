@@ -33,7 +33,7 @@ class VeryDeepVAE(nn.Module):
         #recons_loss = F.mse_loss(recons, input)
 
         loss = recons_loss + kl_loss
-        return loss, {'loss': loss.mean(),
+        return loss.mean(), {'loss': loss.mean(),
                       'Reconstruction_Loss': recons_loss.mean(),
                       'KL_Loss': kl_loss.mean()}
 
