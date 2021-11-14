@@ -1,6 +1,7 @@
 from torch import nn
 from torch.nn import functional as F
 from pytorch_generative.models.vae.vd_vae import VeryDeepVAE as MyVeryDeepVAE
+from pytorch_generative.models.vae.vd_vae import StackConfig
 from .types_ import *
 
 
@@ -8,9 +9,18 @@ class VeryDeepVAE(nn.Module):
     def __init__(self, in_channels, embedding_dim, input_resolution=32, **kwargs):
         super().__init__()
 
+        stack_configs = [
+            StackConfig(n_encoder_blocks=3, n_decoder_blocks=5),
+            StackConfig(n_encoder_blocks=3, n_decoder_blocks=5),
+            StackConfig(n_encoder_blocks=2, n_decoder_blocks=4),
+            StackConfig(n_encoder_blocks=2, n_decoder_blocks=3),
+            StackConfig(n_encoder_blocks=2, n_decoder_blocks=2),
+            StackConfig(n_encoder_blocks=1, n_decoder_blocks=1),
+        ]
+
         self.model = MyVeryDeepVAE(in_channels=in_channels, out_channels=in_channels,
-                                   input_resolution=input_resolution, latent_channels=16,
-                                   hidden_channels=64, bottleneck_channels=32)
+                                   input_resolution=input_resolution, stack_configs=stack_configs,
+                                   latent_channels=16, hidden_channels=64, bottleneck_channels=32)
 
     def forward(self, x, **kwargs):
         preds, kl_div = self.model(x)
