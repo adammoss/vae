@@ -78,11 +78,9 @@ elif config['exp_params']['dataset'] == "mnist":
     dm_cls = MNISTDataModule
     output_activation = nn.Tanh()
     dm_cls.train_transforms = transform_lib.Compose([transform_lib.Resize(config['exp_params']['img_size']),
-                                                     transform_lib.ToTensor(),
-                                                     SetRange])
+                                                     transform_lib.ToTensor()])
     dm_cls.val_transforms = transform_lib.Compose([transform_lib.Resize(config['exp_params']['img_size']),
-                                                   transform_lib.ToTensor(),
-                                                   SetRange])
+                                                   transform_lib.ToTensor()])
 elif config['exp_params']['dataset'] == "lens":
     dm_cls = LensChallengeSpace1DataModule
     output_activation = nn.Tanh()
